@@ -1,6 +1,6 @@
 ;;; column-overflow.el --- column overflow mode      -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2013-2014  Leo Liu
+;; Copyright (C) 2013-2016  Leo Liu
 
 ;; Author: Leo Liu <sdl.web@gmail.com>
 ;; Keywords: extensions, lisp
@@ -44,6 +44,10 @@
       (funcall column-overflow-width)
     column-overflow-width))
 
+(defun column-overflow-temp-buffer-p (&optional buffer)
+  "Return non-nil if BUFFER is a temporary buffer."
+  (string-prefix-p " " (or (buffer-name buffer) "")))
+
 (defconst column-overflow-keywords
   `((,(lambda (limit)
         (let ((col (column-overflow-width)))
@@ -59,7 +63,7 @@
 ;;;###autoload
 (define-minor-mode column-overflow-mode nil
   :lighter ""
-  (unless (minibufferp)
+  (unless (column-overflow-temp-buffer-p)
     (if column-overflow-mode
         (font-lock-add-keywords nil column-overflow-keywords t)
       (font-lock-remove-keywords nil column-overflow-keywords))
